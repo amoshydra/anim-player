@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import './Timeline.css'
+import { css, cx } from '@linaria/core';
+import { useEffect, useRef, useState } from 'react';
 
 interface TimelineProps {
   duration: number
@@ -8,69 +8,101 @@ interface TimelineProps {
   currentTime: number
 }
 
-const Timeline: React.FC<TimelineProps> = ({ duration, onSeek, onScrub, currentTime }) => {
+export const Timeline = ({ duration, onSeek, onScrub, currentTime }: TimelineProps) => {
   const timelineRef = useRef<HTMLDivElement>(null)
-  const [cursor, setCursor] = useState(0);
-  const [mouseDown, setMouseDown] = useState(false);
-  const [mouseEnter, setMouseEnter] = useState(false);
+  const [cursor, setCursor] = useState(0)
+  const [mouseDown, setMouseDown] = useState(false)
+  const [mouseEnter, setMouseEnter] = useState(false)
 
   useEffect(() => {
-    const controller = new AbortController();
-    window.addEventListener("pointermove", (e) => {
-      if (timelineRef.current) {
-        if (mouseEnter || mouseDown) {
-          const rect = timelineRef.current.getBoundingClientRect();
-          const percent = (e.clientX - rect.left) / rect.width
-          const time = Math.min(Math.max(0, percent * duration), duration);
-          
-          setCursor(time);
-          if (mouseDown) {
-            onSeek(time);
+    const controller = new AbortController()
+    window.addEventListener(
+      'pointermove',
+      (e) => {
+        if (timelineRef.current) {
+          if (mouseEnter || mouseDown) {
+            const rect = timelineRef.current.getBoundingClientRect()
+            const percent = (e.clientX - rect.left) / rect.width
+            const time = Math.min(Math.max(0, percent * duration), duration)
+
+            setCursor(time)
+            if (mouseDown) {
+              onSeek(time)
+            }
           }
         }
-      }
-    }, {
-      signal: controller.signal
-    });
+      },
+      { signal: controller.signal }
+    )
     return () => {
-      controller.abort();
+      controller.abort()
     }
-  }, [mouseDown, mouseEnter]);
+  }, [mouseDown, mouseEnter])
+
   useEffect(() => {
-    const controller = new AbortController();
-    window.addEventListener("pointerup", () => {
-      onSeek(cursor);
-      setMouseDown(false);
-      onScrub(false);
-    }, {
-      signal: controller.signal
-    });
+    const controller = new AbortController()
+    window.addEventListener(
+      'pointerup',
+      () => {
+        onSeek(cursor)
+        setMouseDown(false)
+        onScrub(false)
+      },
+      { signal: controller.signal }
+    )
     return () => {
-      controller.abort();
+      controller.abort()
     }
-  }, [cursor]);
+  }, [cursor])
 
   return (
-    <div className="timeline-container">
+    <div className={cssTimelineContainer}>
       <div
+        className={cssTimeline}
         ref={timelineRef}
-        className="timeline"
-        onPointerEnter={() => {
-          setMouseEnter(true);
-        }}
-        onPointerLeave={() => {
-          setMouseEnter(false);
-        }}
+        onPointerEnter={() => setMouseEnter(true)}
+        onPointerLeave={() => setMouseEnter(false)}
         onPointerDown={() => {
-          setMouseDown(true);
-          onScrub(true);
+          setMouseDown(true)
+          onScrub(true)
         }}
       >
-        <div className="timeline-indicator timeline-indicator__current-time" style={{ left: `${(currentTime / duration) * 100}%` }}></div>
-        <div className="timeline-indicator timeline-indicator__caret-time" style={{ left: `${(cursor / duration) * 100}%` }}></div>
+        <div
+          className={cx(cssTimelineIndicator, cssTimelineIndicatorCurrentTime)}
+          style={{ left: `${(currentTime / duration) * 100}%` }}
+        />
+        <div
+          className={cx(cssTimelineIndicator, cssTimelineIndicatorCaretTime)}
+          style={{ left: `${(cursor / duration) * 100}%` }}
+        />
       </div>
     </div>
   )
 }
 
-export default Timeline
+
+const cssTimelineContainer = css`
+  width: 100%;
+  background-color: #f0f0f0;
+  margin-top: 20px;
+  cursor: ew-resize;
+`;
+
+const cssTimeline = css`
+  position: relative;
+  height: 40px;
+  width: 100%;
+`;
+
+const cssTimelineIndicator = css`
+  inset: 0;
+  position: absolute;
+  height: 100%;
+  width: 1px;
+`;
+const cssTimelineIndicatorCurrentTime = css`
+  background-color: #4caf50;
+`;
+const cssTimelineIndicatorCaretTime = css`
+  background-color: #3d3d3d;
+`;

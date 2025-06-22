@@ -1,7 +1,6 @@
 import lottie, { type AnimationItem } from 'lottie-web'
 import { useEffect, useRef, useState } from 'react'
-import './App.css'
-import Timeline from './Timeline'
+import { Timeline } from './Timeline'
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null)
