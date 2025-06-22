@@ -1,26 +1,60 @@
-import lottie from 'lottie-web'
-import { useEffect } from 'react'
+import lottie, { type AnimationItem } from 'lottie-web'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
+import Timeline from './Timeline'
 
 function App() {
-  useEffect(() => {
-    const animation = lottie.loadAnimation({
-      container: document.getElementById('animation-container')!,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: '/test-animation.json'
-    })
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [animation, setAnimation] = useState<AnimationItem | null>(null)
+  const [, setTick] = useState<number>(0);
 
-    return () => {
-      animation.destroy()
+  useEffect(() => {
+    let animationInstance: AnimationItem | null = null
+    if (containerRef.current) {
+      animationInstance = lottie.loadAnimation({
+        container: containerRef.current,
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        path: '/test-animation.json'
+      })
+
+      setAnimation(animationInstance)
+
+      const cat = () => {
+        setTick(v => v + 1);
+        requestAnimationFrame(cat);
+      }
+      requestAnimationFrame(cat);
+
+      return () => {
+        if (animationInstance) animationInstance.destroy()
+      }
     }
   }, [])
 
+  const handleSeek = (time: number) => {
+    if (animation) {
+      animation?.goToAndStop(time, true);
+    }
+  }
+
   return (
     <>
-      <h1>Lottie Animation Viewer</h1>
-      <div id="animation-container" style={{ width: '500px', height: '500px' }}></div>
+      <div ref={containerRef} style={{ width: '500px', height: '500px', border: '1px solid #ccc' }}></div>
+      <br />
+      <Timeline
+        duration={animation?.getDuration(true) || 0}
+        currentTime={animation?.currentFrame || 0}
+        onSeek={handleSeek}
+        onScrub={(isScrubbing) => {
+          if (isScrubbing) {
+            animation?.pause();
+          } else {
+            animation?.play()
+          }
+        }}
+      />
     </>
   )
 }
