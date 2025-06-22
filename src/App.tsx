@@ -5,12 +5,13 @@ import { AnimationControls } from './AnimationControls';
 import { AnimationFileInput } from './AnimationFileInput';
 import { TimeDisplay } from './TimeDisplay';
 import { Timeline } from './Timeline';
+import TestAnimationJson from "./assets/test-animation.json?url";
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [animation, setAnimation] = useState<AnimationItem | null>(null)
   const [isPlayingBeforeScrub, setIsPlayingBeforeScrub] = useState<boolean>(false)
-  const [animationJsonPath, setAnimationJsonPath] = useState<string>('/test-animation.json');
+  const [animationJsonPath, setAnimationJsonPath] = useState<string>(TestAnimationJson);
   const [, setTick] = useState<number>(0);
 
   useEffect(() => {
