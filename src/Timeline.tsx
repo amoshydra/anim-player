@@ -117,6 +117,7 @@ export const Timeline = ({
   return (
     <div className={cssTimelineContainer}>
       <div
+        tabIndex={0}
         className={cssTimeline}
         ref={timelineRef}
         onPointerEnter={() => setMouseEnter(true)}
