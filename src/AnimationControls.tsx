@@ -31,7 +31,7 @@ const IconButton = styled.button`
 
 export const AnimationControls: React.FC<AnimationControlsProps> = ({ isPaused, onPlay, onPause, loop, onLoopChange }) => {
   return (
-    <div style={{ display: 'flex', gap: '8px' }}>
+    <div style={{ display: 'inline-flex', gap: '8px' }}>
       {isPaused ? (
         <IconButton onClick={onPlay}>
           <LuPlay />

@@ -2,6 +2,7 @@ import lottie, { type AnimationItem } from 'lottie-web';
 import { useEffect, useRef, useState } from 'react';
 import { Container } from './AnimationContainer';
 import { AnimationControls } from './AnimationControls';
+import { TimeDisplay } from './TimeDisplay';
 import { Timeline } from './Timeline';
 
 function App() {
@@ -41,21 +42,26 @@ function App() {
     }
   }
 
+  const duration = animation?.getDuration(true) || -1;
+
   return (
     <>
       <Container ref={containerRef} />
       <br />
       {animation && (
         <>
-          <AnimationControls
-            isPaused={!!animation.isPaused}
-            loop={!!animation.loop}
-            onLoopChange={(shouldLoop) => animation.setLoop(shouldLoop)}
-            onPause={() => animation.pause()}
-            onPlay={() => animation.play()}
-          />
+          <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+            <AnimationControls
+              isPaused={!!animation.isPaused}
+              loop={!!animation.loop}
+              onLoopChange={(shouldLoop) => animation.setLoop(shouldLoop)}
+              onPause={() => animation.pause()}
+              onPlay={() => animation.play()}
+            />
+            <TimeDisplay currentTime={animation.currentFrame} duration={duration} />
+          </div>
           <Timeline
-            duration={animation.getDuration(true)}
+            duration={duration}
             currentTime={animation.currentFrame}
             //
             onSeek={handleSeek}
