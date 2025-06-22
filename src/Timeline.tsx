@@ -42,11 +42,15 @@ export const Timeline = ({
           if (mouseEnter || mouseDown) {
             const rect = timelineRef.current.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
-            const time = Math.min(Math.max(0, percent * duration), duration);
+            const newTime = percent * duration;
+            const clampedTime = Math.min(Math.max(0, newTime), duration);
 
-            setCursor(time);
+            setCursor(clampedTime);
             if (mouseDown) {
-              onSeek(time);
+              onSeek(clampedTime);
+              if (newTime === clampedTime) {
+                vibrate();
+              }
             }
           }
         }
@@ -135,18 +139,21 @@ export const Timeline = ({
   );
 };
 
+const vibrate = 'vibrate' in navigator ? () => navigator.vibrate(1) : () => {};
 
 const cssTimelineContainer = css`
   width: 100%;
-  background-color: #f0f0f0;
   margin-top: 20px;
   cursor: ew-resize;
   touch-action: none;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
 `;
 
 const cssTimeline = css`
   position: relative;
-  height: 40px;
+  background-color: #f0f0f0;
+  height: calc(var(--interactive-size) * 1.5);
   width: 100%;
 `;
 
