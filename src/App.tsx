@@ -1,23 +1,26 @@
-import { useState } from 'react'
+import lottie from 'lottie-web'
+import { useEffect } from 'react'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  useEffect(() => {
+    const animation = lottie.loadAnimation({
+      container: document.getElementById('animation-container')!,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: '/test-animation.json'
+    })
+
+    return () => {
+      animation.destroy()
+    }
+  }, [])
 
   return (
     <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Learn more about Vite and React
-      </p>
+      <h1>Lottie Animation Viewer</h1>
+      <div id="animation-container" style={{ width: '500px', height: '500px' }}></div>
     </>
   )
 }
