@@ -2,6 +2,7 @@ import lottie, { type AnimationItem } from 'lottie-web';
 import { useEffect, useRef, useState } from 'react';
 import { Container } from './AnimationContainer';
 import { AnimationControls } from './AnimationControls';
+import { AnimationFileInput } from './AnimationFileInput';
 import { TimeDisplay } from './TimeDisplay';
 import { Timeline } from './Timeline';
 
@@ -9,32 +10,36 @@ function App() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [animation, setAnimation] = useState<AnimationItem | null>(null)
   const [isPlayingBeforeScrub, setIsPlayingBeforeScrub] = useState<boolean>(false)
+  const [animationJsonPath, setAnimationJsonPath] = useState<string>('/test-animation.json');
   const [, setTick] = useState<number>(0);
 
   useEffect(() => {
-    let animationInstance: AnimationItem | null = null
-    if (containerRef.current) {
-      animationInstance = lottie.loadAnimation({
-        container: containerRef.current,
-        renderer: 'svg',
-        loop: false,
-        autoplay: false,
-        path: '/test-animation.json'
-      })
+    if (!containerRef.current) return;
 
-      setAnimation(animationInstance)
-
-      const cat = () => {
-        setTick(v => v + 1);
-        requestAnimationFrame(cat);
-      }
-      requestAnimationFrame(cat);
-
-      return () => {
-        if (animationInstance) animationInstance.destroy()
-      }
+    // Destroy existing animation
+    if (animation) {
+      animation.destroy();
     }
-  }, [])
+
+    const animationInstance = lottie.loadAnimation({
+      container: containerRef.current,
+      renderer: 'svg',
+      loop: false,
+      autoplay: false,
+      path: animationJsonPath,
+    });
+    setAnimation(animationInstance);
+
+    const cat = () => {
+      setTick(v => v + 1);
+      requestAnimationFrame(cat);
+    }
+    requestAnimationFrame(cat);
+
+    return () => {
+      animationInstance.destroy();
+    }
+  }, [animationJsonPath]);
 
   const handleSeek = (time: number) => {
     if (animation) {
@@ -50,7 +55,7 @@ function App() {
       <br />
       {animation && (
         <>
-          <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ display: 'flex', justifyContent: "space-between" }}>
             <AnimationControls
               isPaused={!!animation.isPaused}
               loop={!!animation.loop}
@@ -93,6 +98,8 @@ function App() {
           />
         </>
       )}
+      <br />
+      <AnimationFileInput onFileChange={setAnimationJsonPath} />
     </>
   )
 }
