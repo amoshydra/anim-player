@@ -139,6 +139,7 @@ const cssTimelineContainer = css`
   background-color: #f0f0f0;
   margin-top: 20px;
   cursor: ew-resize;
+  touch-action: none;
 `;
 
 const cssTimeline = css`
