@@ -48,9 +48,9 @@ function App() {
       {animation && (
         <>
           <AnimationControls
-            isPaused={animation.isPaused}
-            loop={animation.loop}
-            onLoopChange={animation.setLoop}
+            isPaused={!!animation.isPaused}
+            loop={!!animation.loop}
+            onLoopChange={(shouldLoop) => animation.setLoop(shouldLoop)}
             onPause={() => animation.pause()}
             onPlay={() => animation.play()}
           />
@@ -91,4 +91,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
