@@ -1,5 +1,6 @@
 import lottie, { type AnimationItem } from 'lottie-web'
 import { useEffect, useRef, useState } from 'react'
+import { Container } from './AnimationContainer'
 import { Timeline } from './Timeline'
 
 function App() {
@@ -41,7 +42,7 @@ function App() {
 
   return (
     <>
-      <div ref={containerRef} style={{ width: '500px', height: '500px', border: '1px solid #ccc' }}></div>
+      <Container ref={containerRef} />
       <br />
       {animation && (
         <Timeline
