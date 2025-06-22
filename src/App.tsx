@@ -1,7 +1,8 @@
-import lottie, { type AnimationItem } from 'lottie-web'
-import { useEffect, useRef, useState } from 'react'
-import { Container } from './AnimationContainer'
-import { Timeline } from './Timeline'
+import lottie, { type AnimationItem } from 'lottie-web';
+import { useEffect, useRef, useState } from 'react';
+import { Container } from './AnimationContainer';
+import { AnimationControls } from './AnimationControls';
+import { Timeline } from './Timeline';
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -45,37 +46,46 @@ function App() {
       <Container ref={containerRef} />
       <br />
       {animation && (
-        <Timeline
-          duration={animation.getDuration(true)}
-          currentTime={animation.currentFrame}
-          //
-          onSeek={handleSeek}
-          onScrub={(isScrubbing) => {
-            if (isScrubbing) {
-              setIsPlayingBeforeScrub(!animation.isPaused);
-              animation.pause();
-            } else {
-              if (isPlayingBeforeScrub) {
-                animation.play()
+        <>
+          <AnimationControls
+            isPaused={animation.isPaused}
+            loop={animation.loop}
+            onLoopChange={animation.setLoop}
+            onPause={() => animation.pause()}
+            onPlay={() => animation.play()}
+          />
+          <Timeline
+            duration={animation.getDuration(true)}
+            currentTime={animation.currentFrame}
+            //
+            onSeek={handleSeek}
+            onScrub={(isScrubbing) => {
+              if (isScrubbing) {
+                setIsPlayingBeforeScrub(!animation.isPaused);
+                animation.pause();
+              } else {
+                if (isPlayingBeforeScrub) {
+                  animation.play()
+                }
               }
-            }
-          }}
-          //
-          isPlaying={!animation.isPaused}
-          onPlaybackChange={(shouldPlay) => {
-            if (shouldPlay) {
-              animation.play();
-            } else {
-              animation.pause();
-            }
-          }}
-          //
-          isLooping={!!animation.loop}
-          onLoopChange={(shouldLoop) => {
-            animation.setLoop(shouldLoop);
-          }}
+            }}
+            //
+            isPlaying={!animation.isPaused}
+            onPlaybackChange={(shouldPlay) => {
+              if (shouldPlay) {
+                animation.play();
+              } else {
+                animation.pause();
+              }
+            }}
+            //
+            isLooping={!!animation.loop}
+            onLoopChange={(shouldLoop) => {
+              animation.setLoop(shouldLoop);
+            }}
 
-        />
+          />
+        </>
       )}
     </>
   )

@@ -63,9 +63,11 @@ export const Timeline = ({
     window.addEventListener(
       "pointerup",
       () => {
-        onSeek(cursor);
-        setMouseDown(false);
-        onScrub(false);
+        if (mouseDown) {
+          onSeek(cursor);
+          setMouseDown(false);
+          onScrub(false);
+        }
       },
       { signal: controller.signal }
     );
