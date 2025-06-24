@@ -21,7 +21,8 @@ export const TimelineMarkersView = ({ markers, duration, onMarkerClick }: Timeli
                 '--width': `${marker.duration / duration * 100}%`,
                 '--left': `${marker.time / duration * 100}%`
               }}
-              onClick={() => {
+              onPointerDown={e => {
+                e.stopPropagation();
                 onMarkerClick(marker);
               }}
             >

@@ -13,12 +13,6 @@ export const AnimationController = ({ animation: _animation, autoPlay }: Animati
   const animation = useControlledAnimation(_animation, autoPlay);
   const [isPlayingBeforeScrub, setIsPlayingBeforeScrub] = useState<boolean>(false);
 
-  const handleSeek = (time: number) => {
-    if (animation) {
-      animation?.goToAndStop(Math.floor(time), true);
-    }
-  };
-
   const duration = animation?.getDuration(true) || -1;
 
   return (
@@ -36,7 +30,12 @@ export const AnimationController = ({ animation: _animation, autoPlay }: Animati
         duration={duration}
         currentTime={animation.currentFrame}
         //
-        onSeek={handleSeek}
+        onSeek={(time: number) => {
+          if (animation) {
+            animation.playSegments([], true);
+            animation?.goToAndStop(Math.floor(time), true);
+          }
+        }}
         onScrub={(isScrubbing) => {
           if (isScrubbing) {
             setIsPlayingBeforeScrub(!animation.isPaused);
@@ -64,7 +63,11 @@ export const AnimationController = ({ animation: _animation, autoPlay }: Animati
         //
         markers={animation.markers}
         onMarkerClick={(marker) => {
-          console.log(marker);
+          animation.playSegments(
+            [
+              [marker.time, marker.time + marker.duration],
+            ],
+          );
         }} />
     </>
   );

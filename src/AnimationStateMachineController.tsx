@@ -1,36 +1,67 @@
-import type { AnimationItem } from "lottie-web";
-import { useEffect, useMemo, useRef, useState } from "react";
+import type { AnimationItem, AnimationSegment } from "lottie-web";
+import { useEffect, useMemo } from "react";
 import type { Marker } from "./types/Animation";
 
 export interface ControlledAnimation extends AnimationItem {
   markers: Marker[]
+  segments: AnimationSegment[];
 }
 
 export const useControlledAnimation = (_animation: AnimationItem, autoplay: boolean): ControlledAnimation => {
-  const [isPlaying, setIsPlaying] = useState(autoplay);
-  const isPlayingRef = useRef(isPlaying);
-  isPlayingRef.current = isPlaying;
-
   const animation = useMemo(() => {
+    let segments: AnimationSegment[] = [];
+    let isPlaying = autoplay;
+
     return new Proxy(_animation, {
       get(target, property, receiver) {
         if (property === 'isPaused') {
-          return !isPlayingRef.current;
+          return !isPlaying;
         }
         if (property === 'play') {
           return () => {
-            setIsPlaying(true);
+            isPlaying = true;
           }
         }
         if (property === 'pause') {
           return () => {
-            setIsPlaying(false);
+            isPlaying = false;
+          }
+        }
+        if (property === 'segments') {
+          if (segments.length === 0) {
+            return [[0, animation.totalFrames]]
+          }
+          return segments;
+        }
+        if (property === 'playSegments') {
+          isPlaying = true;
+          return (_segments: AnimationSegment | AnimationSegment[], forced = false): void => {
+            const incomingSegments = ((): AnimationSegment[] => {
+              if (_segments.length === 0) return [];
+
+              const firstElement = _segments[0];
+              if (typeof firstElement === "number") {
+                return [_segments] as AnimationSegment[];
+              }
+              return _segments as AnimationSegment[];
+            })();
+
+            if (forced) {
+              segments = incomingSegments;
+              return;
+            }
+
+            // @TODO implement exit and entry animation
+            segments = [
+              ...segments, // drop unplayed segment
+              ...incomingSegments
+            ];
           }
         }
         return Reflect.get(target, property, receiver);
       }
     });
-  }, [_animation]);
+  }, [_animation, autoplay]) as ControlledAnimation;
 
   useEffect(() => {
     let isRunning = true;
@@ -39,9 +70,11 @@ export const useControlledAnimation = (_animation: AnimationItem, autoplay: bool
     const run = (elapsed: number) => {
       if (!isRunning) return;
 
-      if (isPlayingRef.current) {
-        const START = 0;
-        const END = animation.totalFrames;
+      if (!animation.isPaused) {
+        const marker = animation.segments[0]
+
+        const START = marker[0];
+        const END = marker[1];
 
         const delta = elapsed - prevElapsed;
         const advance = delta / 1000 * animation.frameRate;
@@ -49,7 +82,10 @@ export const useControlledAnimation = (_animation: AnimationItem, autoplay: bool
         nextFrame = Math.max(START, Math.min(nextFrame, END));
 
         if (nextFrame >= END) {
-          if (animation.loop) {
+          if (animation.segments.length > 1) {
+            animation.segments.shift();
+            nextFrame = animation.segments[0][0];
+          } else if (animation.loop) {
             nextFrame = START;
           } else {
             animation.pause();

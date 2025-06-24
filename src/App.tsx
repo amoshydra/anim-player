@@ -17,11 +17,6 @@ export const App = () => {
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Destroy existing animation
-    if (animation) {
-      animation.destroy();
-    }
-
     const animationInstance = lottie.loadAnimation({
       container: containerRef.current,
       renderer: queryOptions.renderer,
@@ -38,6 +33,7 @@ export const App = () => {
     requestAnimationFrame(cat);
 
     return () => {
+      setAnimation(null);
       animationInstance.destroy();
     }
   }, [animationJsonPath]);
