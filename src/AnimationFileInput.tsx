@@ -29,7 +29,8 @@ const AnimationFileButton: React.FC<AnimationFileButtonProps> = ({ onFileChange,
     if (defaultFile) {
       setLoading(true);
       fetch(defaultFile).then((r) => {
-        if (r.headers.get("content-type") === "application/json") {
+        const contentTypes = (r.headers.get("content-type") ?? "").split(";").map(s => s.trim());
+        if (contentTypes.includes("application/json")) {
           return r.blob().then(b => {
             const blobUrl = URL.createObjectURL(b);
             onFileChange([blobUrl]);
