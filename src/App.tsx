@@ -5,14 +5,16 @@ import { AnimationControls } from './AnimationControls';
 import { AnimationFileInput } from './AnimationFileInput';
 import { TimeDisplay } from './TimeDisplay';
 import { Timeline } from './Timeline';
-import TestAnimationJson from "./assets/test-animation.json?url";
+import { useQuery } from './services/useQuery';
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [animation, setAnimation] = useState<AnimationItem | null>(null)
   const [isPlayingBeforeScrub, setIsPlayingBeforeScrub] = useState<boolean>(false)
-  const [animationJsonPath, setAnimationJsonPath] = useState<string>(TestAnimationJson);
+  const [animationJsonPath, setAnimationJsonPath] = useState<string | undefined>(undefined);
   const [, setTick] = useState<number>(0);
+
+  const queryOptions = useQuery();
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -100,7 +102,10 @@ function App() {
         </>
       )}
       <br />
-      <AnimationFileInput onFileChange={setAnimationJsonPath} />
+      <AnimationFileInput
+        onFileChange={setAnimationJsonPath}
+        defaultFile={queryOptions.file}
+      />
     </>
   )
 }

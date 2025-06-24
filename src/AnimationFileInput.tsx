@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react';
 
 export interface AnimationFileInputProps {
   onFileChange: (url: string) => void;
+  defaultFile: string;
 }
 
-export const AnimationFileInput: React.FC<AnimationFileInputProps> = ({ onFileChange }) => {
+export const AnimationFileInput: React.FC<AnimationFileInputProps> = ({ onFileChange, defaultFile }) => {
   return (
     <AnimationFileButton
+      defaultFile={defaultFile}
       onFileChange={(content) => {
         onFileChange(content[0]);
       }}
@@ -15,19 +17,17 @@ export const AnimationFileInput: React.FC<AnimationFileInputProps> = ({ onFileCh
   )
 };
 
-
 interface AnimationFileButtonProps {
   onFileChange: (url: string[]) => void;
+  defaultFile: string;
 }
-const AnimationFileButton: React.FC<AnimationFileButtonProps> = ({ onFileChange }) => {
+const AnimationFileButton: React.FC<AnimationFileButtonProps> = ({ onFileChange, defaultFile }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const fileUrl = params.get("file");
-    if (fileUrl) {
+    if (defaultFile) {
       setLoading(true);
-      fetch(fileUrl).then((r) => {
+      fetch(defaultFile).then((r) => {
         if (r.headers.get("content-type") === "application/json") {
           return r.blob().then(b => {
             const blobUrl = URL.createObjectURL(b);
