@@ -26,9 +26,9 @@ function App() {
 
     const animationInstance = lottie.loadAnimation({
       container: containerRef.current,
-      renderer: 'svg',
-      loop: false,
-      autoplay: false,
+      renderer: queryOptions.renderer,
+      loop: queryOptions.loop,
+      autoplay: queryOptions.autoPlay,
       path: animationJsonPath,
     });
     setAnimation(animationInstance);
