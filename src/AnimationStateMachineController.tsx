@@ -26,7 +26,7 @@ export const useControlledAnimation = (_animation: AnimationItem, autoplay: bool
       }
     });
   }, [_animation]);
-  
+
   useEffect(() => {
     let isRunning = true;
     let prevElapsed = 0;
@@ -35,23 +35,25 @@ export const useControlledAnimation = (_animation: AnimationItem, autoplay: bool
       if (!isRunning) return;
 
       if (isPlayingRef.current) {
+        const START = 0;
+        const END = animation.totalFrames;
+
         const delta = elapsed - prevElapsed;
         const advance = delta / 1000 * animation.frameRate;
-        let nextFrame = (animation.currentFrame || 0) + advance * animation.playDirection;
+        let nextFrame = (animation.currentFrame || START) + advance * animation.playDirection;
+        nextFrame = Math.max(START, Math.min(nextFrame, END));
 
-        if (nextFrame > animation.totalFrames) {
+        if (nextFrame >= END) {
           if (animation.loop) {
-            nextFrame = 0;
+            nextFrame = START;
           } else {
-            nextFrame = animation.totalFrames;
-            animation.goToAndStop(nextFrame, true);
+            animation.pause();
           }
-        } else if (nextFrame < 0) {
+        } else if (nextFrame <= START) {
           if (animation.loop) {
-            nextFrame = animation.totalFrames;
+            nextFrame = END;
           } else {
-            nextFrame = 0;
-            animation.goToAndStop(nextFrame, true);
+            animation.pause();
           }
         }
         // @ts-expect-error - this is a private method
