@@ -1,5 +1,6 @@
 import { css } from '@linaria/core';
 import React, { useEffect, useState } from 'react';
+import { GlobalDropzone } from './AnimationFileInputDropzone';
 
 export interface AnimationFileInputProps {
   onFileChange: (url: string) => void;
@@ -40,7 +41,6 @@ const AnimationFileButton: React.FC<AnimationFileButtonProps> = ({ onFileChange,
       })
     }
   }, []);
-
 
   const getUrl = async (file?: File | Response) => {
     setLoading(true);
@@ -91,17 +91,23 @@ const AnimationFileButton: React.FC<AnimationFileButtonProps> = ({ onFileChange,
 
 
   return (
-    <label className={cssButton} tabIndex={0}>
-      {loading ? "Processing..." : "Load your own animation"}
-      <input
-        type="file"
-        style={{ display: "none" }}
-        accept=".json,.zip,.lottie"
-        onChange={(e) => {
-          getUrl(e.currentTarget.files?.[0])
-        }}
+    <>
+      <label className={cssButton} tabIndex={0}>
+        {loading ? "Processing..." : "Load your own animation"}
+        <input
+          type="file"
+          style={{ display: "none" }}
+          accept=".json,.zip,.lottie"
+          onChange={(e) => {
+            getUrl(e.currentTarget.files?.[0])
+          }}
+        />
+      </label>
+      <GlobalDropzone
+        onFileDrop={getUrl}
       />
-    </label>
+    </>
+
   )
 };
 
