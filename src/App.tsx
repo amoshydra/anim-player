@@ -44,7 +44,7 @@ function App() {
 
   const handleSeek = (time: number) => {
     if (animation) {
-      animation?.goToAndStop(time, true);
+      animation?.goToAndStop(Math.floor(time), true);
     }
   }
 
