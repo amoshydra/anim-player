@@ -31,12 +31,22 @@ export const useControlledAnimation = (_animation: AnimationItem, autoplay: bool
     let isRunning = true;
     let prevElapsed = 0;
 
+    const queue = [
+      [0, 30],
+      [31, 60],
+      [31, 60],
+      [31, 60],
+      [31, 60],
+      [61, 100],
+    ];
+
     const run = (elapsed: number) => {
       if (!isRunning) return;
 
       if (isPlayingRef.current) {
-        const START = 0;
-        const END = animation.totalFrames;
+        const marker = queue[0]
+        const START = marker[0];
+        const END = marker[1];
 
         const delta = elapsed - prevElapsed;
         const advance = delta / 1000 * animation.frameRate;
@@ -44,7 +54,9 @@ export const useControlledAnimation = (_animation: AnimationItem, autoplay: bool
         nextFrame = Math.max(START, Math.min(nextFrame, END));
 
         if (nextFrame >= END) {
-          if (animation.loop) {
+          if (queue.length > 1) {
+            queue.shift();
+          } else if (animation.loop) {
             nextFrame = START;
           } else {
             animation.pause();
