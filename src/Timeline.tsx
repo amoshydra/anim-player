@@ -83,27 +83,38 @@ export const Timeline = ({
   // Keybindings functionality
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      switch (e.key.toLowerCase()) {
-        case " ":
-          onPlaybackChange(!isPlaying);
-          break;
-        case "arrowright": {
-          onPlaybackChange(false);
-          const t = Math.min(currentTime + 1, duration);
-          onSeek(t);
-          setCursor(t);
-          break;
+      const processed = !(() => {
+        if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) {
+          return true;
         }
-        case "arrowleft": {
-          onPlaybackChange(false);
-          const t = Math.max(currentTime - 1, 0);
-          onSeek(t);
-          setCursor(t);
-          break;
+
+        switch (e.key.toLowerCase()) {
+          case " ":
+            onPlaybackChange(!isPlaying);
+            return;
+          case "arrowright": {
+            onPlaybackChange(false);
+            const t = Math.min(currentTime + 1, duration);
+            onSeek(t);
+            setCursor(t);
+            return;
+          }
+          case "arrowleft": {
+            onPlaybackChange(false);
+            const t = Math.max(currentTime - 1, 0);
+            onSeek(t);
+            setCursor(t);
+            return;
+          }
+          case "l": // L key for toggle loop
+            onLoopChange(!isLooping);
+            return;
         }
-        case "l": // L key for toggle loop
-          onLoopChange(!isLooping);
-          break;
+        return true;
+      })();
+      if (processed) {
+        e.preventDefault();
+        e.stopPropagation();
       }
     };
 
