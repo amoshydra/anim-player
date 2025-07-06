@@ -4,6 +4,7 @@ import type { Marker } from "../types/Animation";
 export interface ControlledAnimation extends AnimationItem {
   markers: Marker[]
   segments: AnimationSegment[];
+  enqueueSegments (segments: AnimationSegment[], dropUnplayedSegments?: boolean): void;
 }
 
 export class EnhancedLottiePlayer<T extends RendererType = 'svg'> {
@@ -92,29 +93,11 @@ export class EnhancedLottiePlayer<T extends RendererType = 'svg'> {
             m.isPlaying = false;
           }
         }
-        if (property === 'playSegments') {
+        if (property === 'enqueueSegments') {
           m.isPlaying = true;
-          return (_segments: AnimationSegment | AnimationSegment[], forced = false): void => {
-            const incomingSegments = ((): AnimationSegment[] => {
-              if (_segments.length === 0) return [];
-
-              const firstElement = _segments[0];
-              if (typeof firstElement === "number") {
-                return [_segments] as AnimationSegment[];
-              }
-              return _segments as AnimationSegment[];
-            })();
-
-            if (forced) {
-              m.segments = incomingSegments;
-              return;
-            }
-
-            // @TODO implement exit and entry animation
-            m.segments = [
-              ...m.segments, // drop unplayed segment
-              ...incomingSegments
-            ];
+          return (incomingSegments: AnimationSegment[], dropUnPlayedSegment = false): void => {
+            const existingSegments = m.segments.slice(0, dropUnPlayedSegment ? 1 : m.segments.length);
+            m.segments = [...existingSegments, ...incomingSegments];
           }
         }
         return Reflect.get(target, property, receiver);

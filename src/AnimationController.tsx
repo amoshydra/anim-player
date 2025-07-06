@@ -69,6 +69,7 @@ export const AnimationController = ({ animation: instance }: AnimationController
             if (firstSegment) {
               const isInSegment = firstSegment[0] <= time && time <= firstSegment[1];
               if (!isInSegment) {
+              // clear segments
                 instance.playSegments([], true);
               }
             }
@@ -103,6 +104,7 @@ export const AnimationController = ({ animation: instance }: AnimationController
         markers={renderData.markers}
         onMarkerClick={(marker) => {
           if (!marker) {
+            // clear segments
             instance.playSegments([], true);
             return;
           }
@@ -116,7 +118,7 @@ export const AnimationController = ({ animation: instance }: AnimationController
             }
           }
 
-          instance.playSegments(
+          instance.enqueueSegments(
             [
               [marker.time, marker.time + marker.duration],
             ],
