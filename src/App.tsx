@@ -1,40 +1,34 @@
 import { css } from '@linaria/core';
-import lottie, { type AnimationItem } from 'lottie-web';
 import { useEffect, useRef, useState } from 'react';
 import { Container } from './AnimationContainer';
 import { AnimationController } from './AnimationController';
 import { AnimationFileDataViewer } from './AnimationFileDataViewer';
 import { AnimationFileInput } from './AnimationFileInput';
+import { EnhancedLottiePlayer, type ControlledAnimation } from './classes/EnhancedLottiePlayer';
 import { useQuery } from './services/useQuery';
 
 export const App = () => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [animation, setAnimation] = useState<AnimationItem | null>(null)
+  const [animation, setAnimation] = useState<ControlledAnimation | null>(null)
   const [animationJsonPath, setAnimationJsonPath] = useState<string | undefined>(undefined);
-  const [, setTick] = useState<number>(0);
   const queryOptions = useQuery();
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const animationInstance = lottie.loadAnimation({
+    const player = new EnhancedLottiePlayer({
       container: containerRef.current,
       renderer: queryOptions.renderer,
       loop: queryOptions.loop,
-      autoplay: false, // controlled
+      autoplay: queryOptions.autoPlay,
       path: animationJsonPath,
     });
-    setAnimation(animationInstance);
 
-    const cat = () => {
-      setTick(v => v + 1);
-      requestAnimationFrame(cat);
-    }
-    requestAnimationFrame(cat);
+    setAnimation(player.instance);
 
     return () => {
       setAnimation(null);
-      animationInstance.destroy();
+      player.destroy();
     }
   }, [animationJsonPath]);
 
@@ -43,7 +37,9 @@ export const App = () => {
       <Container ref={containerRef} />
       <br />
       {animation && (
-        <AnimationController animation={animation} autoPlay={queryOptions.autoPlay}/>
+        <AnimationController
+          animation={animation}
+        />
       )}
       <br />
       <div className={cssRow}>

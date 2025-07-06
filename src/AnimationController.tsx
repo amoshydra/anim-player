@@ -1,80 +1,113 @@
-import type { AnimationItem } from 'lottie-web';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimationControls } from './AnimationControls';
-import { useControlledAnimation } from './AnimationStateMachineController';
 import { TimeDisplay } from './TimeDisplay';
 import { Timeline } from './Timeline';
+import type { ControlledAnimation } from './classes/EnhancedLottiePlayer';
 
 export interface AnimationControllerProps {
-  animation: AnimationItem;
-  autoPlay: boolean;
+  animation: ControlledAnimation;
 }
-export const AnimationController = ({ animation: _animation, autoPlay }: AnimationControllerProps) => {
-  const animation = useControlledAnimation(_animation, autoPlay);
-  const [isPlayingBeforeScrub, setIsPlayingBeforeScrub] = useState<boolean>(false);
 
-  const duration = animation.totalFrames || -1;
+const pickProperties = {
+  'totalFrames': 0,
+  'isPaused': 0,
+  'loop': 0,
+  'currentFrame': 0,
+  'segments': 0,
+  'markers': 0,
+} as const;
+type Keys = keyof typeof pickProperties;
+const properties = Object.keys(pickProperties) as Keys[];
+
+const useRenderData = (animation: ControlledAnimation) => {
+  const getData = ()  =>
+    Object.fromEntries(properties.map(key => [key, animation[key]])) as Pick<ControlledAnimation, Keys>
+  ;
+  const [renderData, setRenderData] = useState(getData());
+  useEffect(() => {
+    let cancelled = false;
+    let num = 0;
+    const handler = () => {
+      if (cancelled) return;
+      setRenderData(getData());
+      requestAnimationFrame(handler)
+    };
+    requestAnimationFrame(handler)
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(num);
+    }
+  }, [animation])
+  return renderData;
+}
+
+export const AnimationController = ({ animation: instance }: AnimationControllerProps) => {
+  const [isPlayingBeforeScrub, setIsPlayingBeforeScrub] = useState<boolean>(false);
+  const renderData = useRenderData(instance);
+
+  const duration = renderData.totalFrames || -1;
 
   return (
     <>
       <div style={{ display: 'flex', justifyContent: "space-between" }}>
         <AnimationControls
-          isPaused={!!animation.isPaused}
-          loop={!!animation.loop}
-          onLoopChange={(shouldLoop) => animation.setLoop(shouldLoop)}
-          onPause={() => animation.pause()}
-          onPlay={() => animation.play()} />
-        <TimeDisplay currentTime={animation.currentFrame} duration={duration} />
+          isPaused={!!renderData.isPaused}
+          loop={!!renderData.loop}
+          onLoopChange={(isLooping) => instance.setLoop(isLooping)}
+          onPause={() => instance.pause()}
+          onPlay={() => instance.play()}
+        />
+        <TimeDisplay currentTime={renderData.currentFrame} duration={duration} />
       </div>
       <Timeline
         duration={duration}
-        currentTime={animation.currentFrame}
+        currentTime={renderData.currentFrame}
         //
         onSeek={(time: number) => {
-          if (animation) {
-            const firstSegment = animation.segments[0];
+          if (renderData) {
+            const firstSegment = renderData.segments[0];
             if (firstSegment) {
               const isInSegment = firstSegment[0] <= time && time <= firstSegment[1];
               if (!isInSegment) {
-                animation.playSegments([], true);
+                instance.playSegments([], true);
               }
             }
-            animation?.goToAndStop(Math.floor(time), true);
+            instance?.goToAndStop(Math.floor(time), true);
           }
         }}
         onScrub={(isScrubbing) => {
           if (isScrubbing) {
-            setIsPlayingBeforeScrub(!animation.isPaused);
-            animation.pause();
+            setIsPlayingBeforeScrub(!renderData.isPaused);
+            instance.pause();
           } else {
             if (isPlayingBeforeScrub) {
-              animation.play();
+              instance.play();
             }
           }
         }}
         //
-        isPlaying={!animation.isPaused}
+        isPlaying={!renderData.isPaused}
         onPlaybackChange={(shouldPlay) => {
           if (shouldPlay) {
-            animation.play();
+            instance.play();
           } else {
-            animation.pause();
+            instance.pause();
           }
         }}
         //
-        isLooping={!!animation.loop}
+        isLooping={!!renderData.loop}
         onLoopChange={(shouldLoop) => {
-          animation.setLoop(shouldLoop);
+          instance.setLoop(shouldLoop);
         }}
         //
-        markers={animation.markers}
+        markers={renderData.markers}
         onMarkerClick={(marker) => {
           if (!marker) {
-            animation.playSegments([], true);
+            instance.playSegments([], true);
             return;
           }
 
-          const lastSegment = animation.segments[animation.segments.length - 1];
+          const lastSegment = renderData.segments[renderData.segments.length - 1];
           if (lastSegment) {
             const isSegmentEqualMarker = marker.time === lastSegment[0] && (marker.duration + marker.time) === lastSegment[1];
             if (isSegmentEqualMarker) {
@@ -83,14 +116,14 @@ export const AnimationController = ({ animation: _animation, autoPlay }: Animati
             }
           }
 
-          animation.playSegments(
+          instance.playSegments(
             [
               [marker.time, marker.time + marker.duration],
             ],
           );
         }}
         //
-        segments={animation.segments}
+        segments={renderData.segments}
       />
     </>
   );
