@@ -23,7 +23,6 @@ export const AnimationFileDataViewerJsonViewerDataViewer = lazy(() => import("re
         });
       return () => {
         destroyed = true;
-        console.log('removing', styleLink);
         styleLink?.remove();
       };
     }, []);
