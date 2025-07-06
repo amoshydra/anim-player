@@ -9,15 +9,21 @@
   -moz-osx-font-smoothing: grayscale;
 
   /* Theme */
-  --border-color: #ccc;
+  --borderColor: #ccc;
 
   --interactive-size: 2.5rem;
 
-  --button-size: var(--interactive-size);
-  --button-border-color: var(--border-color);
-  --button-border-radius: 0.25rem;
+  --button-backgroundColor: rgba(0, 0, 0, 0);
+  --button_hover-backgroundColor: #F9F9F9;
+  --button_active-backgroundColor: #EFEFEF;
+  --button-paddingX: 1rem;
 
-  --renderer-border-radius: 0.5rem;
+
+  --button-size: var(--interactive-size);
+  --button-borderColor: var(--borderColor);
+  --button-borderRadius: 0.25rem;
+
+  --renderer-borderRadius: 0.5rem;
 }
 
 *, *::before, *::after {

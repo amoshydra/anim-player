@@ -172,7 +172,7 @@ const cssTimelineContainer = css`
   cursor: ew-resize;
   touch-action: none;
   padding: 1rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--borderColor);
 `;
 
 const cssTimeline = css`
