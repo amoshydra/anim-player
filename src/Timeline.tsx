@@ -1,4 +1,5 @@
 import { css, cx } from '@linaria/core';
+import type { AnimationSegment } from 'lottie-web';
 import { useEffect, useRef, useState } from 'react';
 import { TimelineMarkersView } from './TimelineMarkersView';
 import type { Marker } from './types/Animation';
@@ -18,6 +19,8 @@ interface TimelineProps {
   //
   markers: Marker[];
   onMarkerClick: (marker: Marker) => void;
+  //
+  segments: AnimationSegment[];
 }
 
 export const Timeline = ({
@@ -35,6 +38,8 @@ export const Timeline = ({
   //
   markers,
   onMarkerClick,
+  //
+  segments,
 }: TimelineProps) => {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [cursor, setCursor] = useState(0);
@@ -150,6 +155,7 @@ export const Timeline = ({
           duration={duration}
           markers={markers}
           onMarkerClick={onMarkerClick}
+          segments={segments}
         />
         <div
           className={cx(cssTimelineIndicator, cssTimelineIndicatorCaretTime)}
@@ -177,7 +183,7 @@ const cssTimelineContainer = css`
 
 const cssTimeline = css`
   position: relative;
-  background-color: #f0f0f0;
+  background-color: none;
   padding-top: calc(var(--interactive-size) * 1.5);
   width: 100%;
 `;

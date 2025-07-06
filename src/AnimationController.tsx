@@ -68,7 +68,10 @@ export const AnimationController = ({ animation: _animation, autoPlay }: Animati
               [marker.time, marker.time + marker.duration],
             ],
           );
-        }} />
+        }}
+        //
+        segments={animation.segments}
+      />
     </>
   );
 };
