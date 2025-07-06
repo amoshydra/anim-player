@@ -5,7 +5,7 @@ const options = {
   autoPlay: (params.get("autoplay") ?? "true") === "true",
   file: params.get("file") ?? TestAnimationJson,
   loop: (params.get("loop") ?? "true") === "true",
-  renderer: (params.get("renderer") ?? "svg") as "svg" | "canvas",
+  renderer: (params.get("renderer") ?? "canvas") as "svg" | "canvas",
 };
 export const useQuery = () => {
   return options;
