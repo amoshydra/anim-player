@@ -222,7 +222,7 @@ const cssTimelineIndicator = css`
   inset: 0;
   position: absolute;
   height: 100%;
-  width: 1px;
+  width: 1.1px;
   pointer-events: none;
 `;
 const cssTimelineIndicatorCurrentTime = css`
