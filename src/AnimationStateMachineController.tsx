@@ -1,7 +1,12 @@
 import type { AnimationItem } from "lottie-web";
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { Marker } from "./types/Animation";
 
-export const useControlledAnimation = (_animation: AnimationItem, autoplay: boolean) => {
+export interface ControlledAnimation extends AnimationItem {
+  markers: Marker[]
+}
+
+export const useControlledAnimation = (_animation: AnimationItem, autoplay: boolean): ControlledAnimation => {
   const [isPlaying, setIsPlaying] = useState(autoplay);
   const isPlayingRef = useRef(isPlaying);
   isPlayingRef.current = isPlaying;
@@ -26,7 +31,7 @@ export const useControlledAnimation = (_animation: AnimationItem, autoplay: bool
       }
     });
   }, [_animation]);
-  
+
   useEffect(() => {
     let isRunning = true;
     let prevElapsed = 0;
@@ -67,5 +72,5 @@ export const useControlledAnimation = (_animation: AnimationItem, autoplay: bool
       isRunning = false;
     }
   }, [animation]);
-  return animation;
+  return animation as ControlledAnimation;
 }

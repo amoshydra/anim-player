@@ -113,7 +113,11 @@ const AnimationController = ({ animation: _animation, autoPlay }: { animation: A
         onLoopChange={(shouldLoop) => {
           animation.setLoop(shouldLoop);
         }}
-
+        //
+        markers={animation.markers}
+        onMarkerClick={(marker) => {
+          console.log(marker);
+        }}
       />
     </>
   );

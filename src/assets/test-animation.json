@@ -20637,5 +20637,23 @@
       "bm": 0
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "tm": 0,
+      "dr": 120,
+      "cm": "{\"name\":\"idle:bobbing\"}"
+    }, {
+      "tm": 180,
+      "dr": 70,
+      "cm": "{\"name\":\"idle:right\"}"
+    }, {
+      "tm": 250,
+      "dr": 66,
+      "cm": "{\"name\":\"idle:left\"}"
+    }, {
+      "tm": 105,
+      "dr": 70,
+      "cm": "{\"name\":\"idle:blink\"}"
+    }
+  ]
 }

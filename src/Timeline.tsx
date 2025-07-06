@@ -1,5 +1,7 @@
 import { css, cx } from '@linaria/core';
 import { useEffect, useRef, useState } from 'react';
+import { TimelineMarkersView } from './TimelineMarkersView';
+import type { Marker } from './types/Animation';
 
 interface TimelineProps {
   duration: number;
@@ -13,6 +15,9 @@ interface TimelineProps {
   //
   isLooping: boolean;
   onLoopChange: (b: boolean) => void;
+  //
+  markers: Marker[];
+  onMarkerClick: (marker: Marker) => void;
 }
 
 export const Timeline = ({
@@ -21,12 +26,15 @@ export const Timeline = ({
   //
   onSeek,
   onScrub,
-  // 
+  //
   isPlaying,
   onPlaybackChange,
   //
-  isLooping, 
-  onLoopChange
+  isLooping,
+  onLoopChange,
+  //
+  markers,
+  onMarkerClick,
 }: TimelineProps) => {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [cursor, setCursor] = useState(0);
@@ -138,6 +146,11 @@ export const Timeline = ({
           onScrub(true);
         }}
       >
+        <TimelineMarkersView
+          duration={duration}
+          markers={markers}
+          onMarkerClick={onMarkerClick}
+        />
         <div
           className={cx(cssTimelineIndicator, cssTimelineIndicatorCaretTime)}
           style={{ left: `${(cursor / duration) * 100}%` }}
@@ -165,7 +178,7 @@ const cssTimelineContainer = css`
 const cssTimeline = css`
   position: relative;
   background-color: #f0f0f0;
-  height: calc(var(--interactive-size) * 1.5);
+  padding-top: calc(var(--interactive-size) * 1.5);
   width: 100%;
 `;
 
@@ -174,6 +187,7 @@ const cssTimelineIndicator = css`
   position: absolute;
   height: 100%;
   width: 1px;
+  pointer-events: none;
 `;
 const cssTimelineIndicatorCurrentTime = css`
   background-color: #4caf5099;
