@@ -13,7 +13,7 @@ export const AnimationController = ({ animation: _animation, autoPlay }: Animati
   const animation = useControlledAnimation(_animation, autoPlay);
   const [isPlayingBeforeScrub, setIsPlayingBeforeScrub] = useState<boolean>(false);
 
-  const duration = animation?.getDuration(true) || -1;
+  const duration = animation.totalFrames || -1;
 
   return (
     <>
@@ -33,9 +33,11 @@ export const AnimationController = ({ animation: _animation, autoPlay }: Animati
         onSeek={(time: number) => {
           if (animation) {
             const firstSegment = animation.segments[0];
-            const isInSegment = firstSegment[0] <= time && time <= firstSegment[1];
-            if (!isInSegment) {
-              animation.playSegments([], true);
+            if (firstSegment) {
+              const isInSegment = firstSegment[0] <= time && time <= firstSegment[1];
+              if (!isInSegment) {
+                animation.playSegments([], true);
+              }
             }
             animation?.goToAndStop(Math.floor(time), true);
           }
@@ -73,10 +75,12 @@ export const AnimationController = ({ animation: _animation, autoPlay }: Animati
           }
 
           const lastSegment = animation.segments[animation.segments.length - 1];
-          const isSegmentEqualMarker = marker.time === lastSegment[0] && (marker.duration + marker.time) === lastSegment[1];
-          if (isSegmentEqualMarker) {
-            // don't queue marker if it is being played as current segment
-            return;
+          if (lastSegment) {
+            const isSegmentEqualMarker = marker.time === lastSegment[0] && (marker.duration + marker.time) === lastSegment[1];
+            if (isSegmentEqualMarker) {
+              // don't queue marker if it is being played as current segment
+              return;
+            }
           }
 
           animation.playSegments(
