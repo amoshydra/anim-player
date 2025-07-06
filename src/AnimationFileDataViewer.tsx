@@ -1,12 +1,13 @@
 import { css, cx } from '@linaria/core';
-import React, { memo, useRef, useState } from 'react';
+import type { AnimationItem } from 'lottie-web';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { LuInfo, LuX } from 'react-icons/lu';
 import { AnimationFileDataViewerJsonViewer } from './AnimationFileDataViewerJsonViewer';
 import { IconButton } from './ComponentButtons';
 import type { MarkerUnprocessed } from './types/Animation';
 
 interface AnimationFileDataViewerProps {
-  animationData: object | null | undefined;
+  animation: AnimationItem | null;
 }
 
 interface Data {
@@ -39,9 +40,8 @@ interface Data {
   w: number;
 }
 
-
-export const AnimationFileDataViewer: React.FC<AnimationFileDataViewerProps> = memo(({ animationData: _animationData }) => {
-  const animationData = _animationData as Data;
+export const AnimationFileDataViewer: React.FC<AnimationFileDataViewerProps> = memo(({ animation }) => {
+  const animationData = useAnimationData(animation)
   const modalRef = useRef <HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -110,6 +110,34 @@ export const AnimationFileDataViewer: React.FC<AnimationFileDataViewerProps> = m
     </>
   );
 });
+
+const tryRun = (fn: () => void) => {
+  try {
+    return fn()
+  } catch (e) {
+    // ignore
+  }
+}
+
+const useAnimationData = (animation: AnimationItem | null | undefined) => {
+  const [animationData, setAnimationData] = useState<Data | null>(null) ;
+
+  useEffect(() => {
+    const handler = () => {
+      setAnimationData((animation as unknown as { animationData: Data }).animationData);
+    }
+    tryRun(() => {
+      animation?.addEventListener("config_ready", handler);
+    })
+    return () => {
+      tryRun(() => {
+        animation?.removeEventListener("config_ready", handler);
+      });
+    }
+  }, [animation]);
+
+  return animationData;
+}
 
 const cssDialog = css`
   padding: 0;

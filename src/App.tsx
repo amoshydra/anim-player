@@ -50,7 +50,7 @@ export const App = () => {
             defaultFile={queryOptions.file}
           />
           <AnimationFileDataViewer
-            animationData={(animation as unknown as { animationData: object } | null)?.animationData}
+            animation={animation}
           />
         </div>
       </div>
