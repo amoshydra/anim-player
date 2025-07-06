@@ -1,7 +1,9 @@
+import { css } from '@linaria/core';
 import lottie, { type AnimationItem } from 'lottie-web';
 import { useEffect, useRef, useState } from 'react';
 import { Container } from './AnimationContainer';
 import { AnimationController } from './AnimationController';
+import { AnimationFileDataViewer } from './AnimationFileDataViewer';
 import { AnimationFileInput } from './AnimationFileInput';
 import { useQuery } from './services/useQuery';
 
@@ -48,10 +50,21 @@ export const App = () => {
         <AnimationController animation={animation} autoPlay={queryOptions.autoPlay}/>
       )}
       <br />
-      <AnimationFileInput
-        onFileChange={setAnimationJsonPath}
-        defaultFile={queryOptions.file}
-      />
+      <div className={cssRow}>
+        <AnimationFileInput
+          onFileChange={setAnimationJsonPath}
+          defaultFile={queryOptions.file}
+        />
+        <AnimationFileDataViewer
+          animationData={(animation as unknown as { animationData: object } | null)?.animationData}
+        />
+      </div>
     </>
   );
 }
+
+const cssRow = css`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
