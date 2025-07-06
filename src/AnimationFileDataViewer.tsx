@@ -1,6 +1,7 @@
 import { css, cx } from '@linaria/core';
-import React, { memo, useRef } from 'react';
+import React, { memo, useRef, useState } from 'react';
 import { LuInfo, LuX } from 'react-icons/lu';
+import { AnimationFileDataViewerJsonViewer } from './AnimationFileDataViewerJsonViewer';
 import { IconButton } from './ComponentButtons';
 import type { MarkerUnprocessed } from './types/Animation';
 
@@ -41,12 +42,12 @@ interface Data {
 
 export const AnimationFileDataViewer: React.FC<AnimationFileDataViewerProps> = memo(({ animationData: _animationData }) => {
   const animationData = _animationData as Data;
-
   const modalRef = useRef <HTMLDialogElement>(null);
-  const jsonDataContainerRef = useRef <HTMLTextAreaElement>(null);
+  const [open, setOpen] = useState(false);
 
   const openModal = () => {
     modalRef.current?.showModal();
+    setOpen(true);
   };
 
   const closeModal = () => {
@@ -54,13 +55,6 @@ export const AnimationFileDataViewer: React.FC<AnimationFileDataViewerProps> = m
   };
 
   if (!animationData) return null;
-
-  {
-    const element = jsonDataContainerRef.current;
-    if (element) {
-      element.style.height = `${element.scrollHeight}px`;
-    }
-  };
 
   return (
     <>
@@ -71,7 +65,13 @@ export const AnimationFileDataViewer: React.FC<AnimationFileDataViewerProps> = m
         <LuInfo />
       </IconButton>
 
-      <dialog className={cssDialog} ref={modalRef}>
+      <dialog
+        className={cssDialog}
+        ref={modalRef}
+        onClose={() => {
+          setOpen(false);
+        }}
+      >
         <div className={cssDialogInner}>
           <div className={cx(cssDialogHeader, cssDialogContent)}>
             <IconButton
@@ -84,7 +84,7 @@ export const AnimationFileDataViewer: React.FC<AnimationFileDataViewerProps> = m
             <h3 className={cssTitle}>Animation Data</h3>
           </div>
           <div className={cx(cssDialogContent, cssDataContainer)}>
-            {animationData && (
+            {open && animationData && (
               <>
                 <div className={cssInfoViewContainer}>
                   <span className={cssLabel}>Name:</span>
@@ -99,12 +99,8 @@ export const AnimationFileDataViewer: React.FC<AnimationFileDataViewerProps> = m
                   <span className={cssLabel}>Total frames:</span>
                   <span className={cssData}>{animationData.op}</span>
                 </div>
-                <textarea
-                  ref={jsonDataContainerRef}
-                  readOnly
-                  tabIndex={0}
-                  className={cssJsonDataContainer}
-                  defaultValue={JSON.stringify(animationData, null, 2)}
+                <AnimationFileDataViewerJsonViewer
+                  data={animationData}
                 />
               </>
             )}
@@ -182,13 +178,5 @@ const cssDataContainer = css`
   flex-shrink: 1;
   overflow: auto;
   row-gap: 1rem;
-`;
-const cssJsonDataContainer = css`
-  height: 100%;
-  background: #F1F1F1;
-  padding: 0.5rem;
-  font-size: 1rem;
-  width: 48rem;
-  overflow: hidden;
-  resize: none;
+  align-content: start;
 `;
