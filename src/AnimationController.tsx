@@ -63,6 +63,10 @@ export const AnimationController = ({ animation: _animation, autoPlay }: Animati
         //
         markers={animation.markers}
         onMarkerClick={(marker) => {
+          if (!marker) {
+            animation.playSegments([], true);
+            return;
+          }
           animation.playSegments(
             [
               [marker.time, marker.time + marker.duration],

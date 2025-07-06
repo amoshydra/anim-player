@@ -18,7 +18,7 @@ interface TimelineProps {
   onLoopChange: (b: boolean) => void;
   //
   markers: Marker[];
-  onMarkerClick: (marker: Marker) => void;
+  onMarkerClick: (marker: Marker | null) => void;
   //
   segments: AnimationSegment[];
 }
@@ -99,6 +99,18 @@ export const Timeline = ({
       const processed = !(() => {
         if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) {
           return true;
+        }
+
+        if (e.key.match(/^[0-9]$/)) {
+          if (e.key === "0") {
+            onMarkerClick(null);
+          }
+          const markerIndex = parseInt(e.key, 10) - 1;
+          const marker = markers[markerIndex];
+          if (marker) {
+            onMarkerClick(marker);
+          }
+          return;
         }
 
         switch (e.key.toLowerCase()) {
