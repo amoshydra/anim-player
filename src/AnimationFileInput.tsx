@@ -1,6 +1,6 @@
-import { css } from '@linaria/core';
 import React, { useEffect, useState } from 'react';
 import { GlobalDropzone } from './AnimationFileInputDropzone';
+import { cssButton } from './ComponentButtons';
 
 export interface AnimationFileInputProps {
   onFileChange: (url: string) => void;
@@ -111,19 +111,3 @@ const AnimationFileButton: React.FC<AnimationFileButtonProps> = ({ onFileChange,
 
   )
 };
-
-const cssButton = css`
-  border: 1px solid var(--border-color);
-  height: var(--interactive-size);
-  border-radius: var(--icon-button-border-radius);
-  display: inline-flex;
-  padding: 1rem;
-  justify-content: center;
-  align-items: center;
-  @media (hover: hover) {
-    &:hover {
-      background: #F9F9F9;
-    }
-  }
-  cursor: pointer;
-`;
