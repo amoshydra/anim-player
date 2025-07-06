@@ -1,11 +1,8 @@
 import lottie, { type AnimationItem } from 'lottie-web';
 import { useEffect, useRef, useState } from 'react';
 import { Container } from './AnimationContainer';
-import { AnimationControls } from './AnimationControls';
+import { AnimationController } from './AnimationController';
 import { AnimationFileInput } from './AnimationFileInput';
-import { useControlledAnimation } from './AnimationStateMachineController';
-import { TimeDisplay } from './TimeDisplay';
-import { Timeline } from './Timeline';
 import { useQuery } from './services/useQuery';
 
 export const App = () => {
@@ -54,70 +51,6 @@ export const App = () => {
       <AnimationFileInput
         onFileChange={setAnimationJsonPath}
         defaultFile={queryOptions.file}
-      />
-    </>
-  );
-}
-
-
-const AnimationController = ({ animation: _animation, autoPlay }: { animation: AnimationItem, autoPlay: boolean }) => {
-  const animation = useControlledAnimation(_animation, autoPlay);
-  const [isPlayingBeforeScrub, setIsPlayingBeforeScrub] = useState<boolean>(false)
-
-  const handleSeek = (time: number) => {
-    if (animation) {
-      animation?.goToAndStop(Math.floor(time), true);
-    }
-  }
-
-  const duration = animation?.getDuration(true) || -1;
-
-  return (
-    <>
-      <div style={{ display: 'flex', justifyContent: "space-between" }}>
-        <AnimationControls
-          isPaused={!!animation.isPaused}
-          loop={!!animation.loop}
-          onLoopChange={(shouldLoop) => animation.setLoop(shouldLoop)}
-          onPause={() => animation.pause()}
-          onPlay={() => animation.play()}
-        />
-        <TimeDisplay currentTime={animation.currentFrame} duration={duration} />
-      </div>
-      <Timeline
-        duration={duration}
-        currentTime={animation.currentFrame}
-        //
-        onSeek={handleSeek}
-        onScrub={(isScrubbing) => {
-          if (isScrubbing) {
-            setIsPlayingBeforeScrub(!animation.isPaused);
-            animation.pause();
-          } else {
-            if (isPlayingBeforeScrub) {
-              animation.play()
-            }
-          }
-        }}
-        //
-        isPlaying={!animation.isPaused}
-        onPlaybackChange={(shouldPlay) => {
-          if (shouldPlay) {
-            animation.play();
-          } else {
-            animation.pause();
-          }
-        }}
-        //
-        isLooping={!!animation.loop}
-        onLoopChange={(shouldLoop) => {
-          animation.setLoop(shouldLoop);
-        }}
-        //
-        markers={animation.markers}
-        onMarkerClick={(marker) => {
-          console.log(marker);
-        }}
       />
     </>
   );
