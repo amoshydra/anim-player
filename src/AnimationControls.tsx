@@ -14,15 +14,22 @@ export const AnimationControls: React.FC<AnimationControlsProps> = ({ isPaused, 
   return (
     <div style={{ display: 'inline-flex', gap: '8px' }}>
       {isPaused ? (
-        <IconButton onClick={onPlay}>
+        <IconButton
+          aria-label='play'
+          onClick={onPlay}
+        >
           <LuPlay />
         </IconButton>
       ) : (
-        <IconButton onClick={onPause}>
+        <IconButton
+          aria-label='pause'
+          onClick={onPause}
+        >
           <LuPause />
         </IconButton>
       )}
       <IconButton
+        aria-label={loop ? 'disable looping' : 'enable looping'}
         onClick={() => {
           const shouldLoop = !loop;
           onLoopChange(shouldLoop);
