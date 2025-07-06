@@ -145,8 +145,9 @@ const cssDialogHeader = css`
 `;
 const cssTitle = css`
   font-size: 1.25rem;
-  line-height: 2em;
+  line-height: 1.25em;
   margin: 0;
+  margin-top: 0.5rem;
 `;
 
 // General
@@ -165,12 +166,14 @@ const cssData = css`
 `;
 
 const cssInfoViewContainer = css`
-  max-width: 24rem;
   display: grid;
-  column-gap: 2rem;
+  column-gap: 0.25rem;
   row-gap: 0.25rem;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(auto, max-content) minmax(auto, max-content);
   font-size: 1rem;
+  white-space: nowrap;
+  height: 8.25rem;
+  overflow-x: auto;
 `;
 
 const cssDataContainer = css`
@@ -181,4 +184,5 @@ const cssDataContainer = css`
   flex-shrink: 1;
   row-gap: 1rem;
   align-content: start;
+  white-space: nowrap;
 `;

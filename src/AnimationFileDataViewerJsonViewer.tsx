@@ -29,13 +29,19 @@ export const AnimationFileDataViewerJsonViewer = memo(({ data }: { data: object 
             setShowJsonViewer(s => !s);
           }}
         >
-          {showJsonViewer ? 'Show plain viewer' : 'Show JSON viewer'}
+          <span className="d-none d-sm-inline">Show</span>&nbsp;
+          <span>{showJsonViewer ? 'Plain' : 'JSON'}</span>&nbsp;
+          <span className="d-none d-sm-inline">Viewer</span>
         </Button>
 
         {
           showJsonViewer && (
             <>
-              <span>Show Level: {expand}</span>
+              <span>
+                <span className="d-none d-sm-inline">Show </span>
+                <span>Level: </span>
+                <span>{expand}</span>
+              </span>
               <IconButton
                 onClick={() => {
                   setExpand(e => Math.max(e - 1, 2));
@@ -98,6 +104,7 @@ const cssJsonDataContainer = css`
   font-size: 1rem;
   line-height: 1.5;
   width: 48rem;
+  max-width: 100%;
   font-family: monospace;
   border: 1px solid var(--borderColor);
   overflow: auto;
