@@ -79,9 +79,9 @@ export const useControlledAnimation = (_animation: AnimationItem, autoplay: bool
         const delta = elapsed - prevElapsed;
         const advance = delta / 1000 * animation.frameRate;
         let nextFrame = (animation.currentFrame || START) + advance * animation.playDirection;
-        nextFrame = Math.max(START, Math.min(nextFrame, END));
+        nextFrame = Math.max(START, Math.min(nextFrame, END + 1));
 
-        if (nextFrame >= END) {
+        if (nextFrame > END) {
           if (animation.segments.length > 1) {
             animation.segments.shift();
             nextFrame = animation.segments[0][0];
@@ -90,7 +90,7 @@ export const useControlledAnimation = (_animation: AnimationItem, autoplay: bool
           } else {
             animation.pause();
           }
-        } else if (nextFrame <= START) {
+        } else if (nextFrame < START) {
           if (animation.loop) {
             nextFrame = END;
           } else {

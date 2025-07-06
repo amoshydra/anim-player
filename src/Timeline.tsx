@@ -119,14 +119,32 @@ export const Timeline = ({
             return;
           case "arrowright": {
             onPlaybackChange(false);
-            const t = Math.min(currentTime + 1, duration);
+            const firstFrame = segments[0][0];
+            const lastFrame = segments[0][1];
+            let t = currentTime + 1;
+            if (t > lastFrame) {
+              if (isLooping) {
+                t = firstFrame
+              } else {
+                t = Math.min(t, lastFrame)
+              }
+            }
             onSeek(t);
             setCursor(t);
             return;
           }
           case "arrowleft": {
             onPlaybackChange(false);
-            const t = Math.max(currentTime - 1, 0);
+            const firstFrame = segments[0][0];
+            const lastFrame = segments[0][1];
+            let t = currentTime - 1;
+            if (t < firstFrame) {
+              if (isLooping) {
+                t = lastFrame
+              } else {
+                t = Math.max(t, firstFrame)
+              }
+            }
             onSeek(t);
             setCursor(t);
             return;
