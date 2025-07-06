@@ -1,54 +1,102 @@
-# React + TypeScript + Vite
+<div align="center">
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Anim Player
 
-Currently, two official plugins are available:
+[amoshydra.github.io/anim-player](https://amoshydra.github.io/anim-player/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A Lottie Player with a user-friendly interface for viewing Lottie animation file<br />
+Comes with timeline controls, markers visualization, and JSON data viewing.
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+![banner](https://github.com/user-attachments/assets/19650aaf-1115-414c-acbe-8efc87902337)
+</div>
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+
+## Features
+
+- Load local Lottie animation files
+- Play, pause, and scrub through animations
+- View and interact with the animation timeline
+- Display markers on the timeline
+- View raw JSON data of the loaded animation
+- Responsive design for various screen sizes
+
+## Keyboard Shortcuts
+
+The Anim Player supports several keyboard shortcuts for controlling playback and navigation:
+
+- **Number keys (0-9)**: Select markers by index. Pressing "0" clears marker selection.
+- **Spacebar**: Toggle playback (play/pause)
+- **ArrowRight**: Step forward one frame
+- **ArrowLeft**: Step backward one frame
+- **L key**: Toggle looping
+
+## Configuration via Query Parameters
+
+The Anim Player can be configured using URL query parameters. The following parameters are supported:
+
+- `autoplay`: Controls whether the animation starts playing automatically (default: true), example:
+  - `?autoplay=false`
+
+- `file`: Specifies the URL of the Lottie animation file to load, example:
+  - `?file=https://example.com/animation.lottie`
+  - `?file=https://example.com/animation.json`
+
+- `loop`: Controls whether the animation should loop (default: true), example:
+  - `?loop=false`
+
+- `renderer`: Specifies the renderer to use ("svg" or "canvas", default: "canvas"), example:
+  - `?renderer=svg`
+
+You can combine multiple parameters in a single URL:
+```
+http://localhost:5173/?autoplay=true&file=https://example.com/animation.json&loop=false&renderer=svg
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Getting Started
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+### Prerequisites
+
+Make sure you have Node.js (v20.0.0 or later) installed on your machine.
+
+### Installation
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/amoshydra/anim-player.git
+   cd anim-player
+   ```
+
+2. Install dependencies using pnpm (or npm):
+   ```bash
+   pnpm install
+   ```
+
+3. Start the development server:
+   ```bash
+   pnpm dev
+   ```
+
+4. Open your browser and navigate to `http://localhost:5173` to see the application in action.
+
+
+## Available Scripts
+
+In the project directory, you can run:
+
+### `pnpm dev`
+
+Runs the app in development mode. Open `http://localhost:5173` to view it in your browser. The page will reload when you make changes.
+
+### `pnpm build`
+
+Builds the app for production to the `dist` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
+
+### `pnpm preview`
+
+Previews the production build locally before deploying it.
+
+## License
+
+This project is licensed under the MIT License.

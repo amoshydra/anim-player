@@ -4,6 +4,7 @@ import { Container } from './AnimationContainer';
 import { AnimationController } from './AnimationController';
 import { AnimationFileDataViewer } from './AnimationFileDataViewer';
 import { AnimationFileInput } from './AnimationFileInput';
+import { AppCredit } from './AppCredit';
 import { EnhancedLottiePlayer, type ControlledAnimation } from './classes/EnhancedLottiePlayer';
 import { useQuery } from './services/useQuery';
 
@@ -34,23 +35,26 @@ export const App = () => {
 
   return (
     <>
-      <Container ref={containerRef} />
-      <br />
-      {animation && (
-        <AnimationController
-          animation={animation}
-        />
-      )}
-      <br />
-      <div className={cssRow}>
-        <AnimationFileInput
-          onFileChange={setAnimationJsonPath}
-          defaultFile={queryOptions.file}
-        />
-        <AnimationFileDataViewer
-          animationData={(animation as unknown as { animationData: object } | null)?.animationData}
-        />
+      <div className={cssAppContainer}>
+        <Container ref={containerRef} />
+        <br />
+        {animation && (
+          <AnimationController
+            animation={animation}
+          />
+        )}
+        <br />
+        <div className={cssRow}>
+          <AnimationFileInput
+            onFileChange={setAnimationJsonPath}
+            defaultFile={queryOptions.file}
+          />
+          <AnimationFileDataViewer
+            animationData={(animation as unknown as { animationData: object } | null)?.animationData}
+          />
+        </div>
       </div>
+      <AppCredit />
     </>
   );
 }
@@ -59,4 +63,7 @@ const cssRow = css`
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+`;
+const cssAppContainer = css`
+  min-height: 100vh;
 `;

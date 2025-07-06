@@ -8,6 +8,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  --global-padding: 0.5rem;
+
   /* Theme */
   --borderColor: #ccc;
 
@@ -28,6 +30,10 @@
 
 *, *::before, *::after {
   box-sizing: border-box;
+}
+
+body {
+  margin: var(--global-padding);
 }
 
 .d-none {
