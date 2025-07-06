@@ -1,8 +1,10 @@
 import { css } from "@linaria/core";
-import { lazy, memo, Suspense, useEffect, type ComponentProps } from "react";
-import type { JsonView } from "react-json-view-lite";
+import { memo, Suspense, useDeferredValue, useState } from "react";
+import { LuMinus, LuPlus } from "react-icons/lu";
+import { AnimationFileDataViewerJsonViewerDataViewer } from "./AnimationFileDataViewerJsonViewerDataViewer";
+import { Button, IconButton } from "./ComponentButtons";
 
-const TextAreaView = ({ data }: { data: object }) => {
+const SimpleTextAreaView = ({ data }: { data: object }) => {
   return (
     <textarea
       readOnly
@@ -13,54 +15,84 @@ const TextAreaView = ({ data }: { data: object }) => {
   )
 }
 
-const LaziedViewer = lazy(() => import("react-json-view-lite").then((m) => ({
-  default: (p: ComponentProps<typeof JsonView>) => {
-    useEffect(() => {
-      let destroyed = false;
-      let styleLink: HTMLLinkElement | null = null
-      import("react-json-view-lite/dist/index.css?url")
-        .then(({ default: url }) => {
-          if (destroyed) return;
-
-          styleLink = document.createElement("link");
-          styleLink.href = url;
-          styleLink.type = 'text/css';
-          styleLink.rel = "stylesheet";
-          document.head.appendChild(styleLink);
-        });
-      return () => {
-        destroyed = true;
-        console.log('removing', styleLink);
-        styleLink?.remove();
-      };
-    }, []);
-    return (
-      <m.JsonView
-        style={{
-          container: cssJsonDataContainer
-        }}
-        shouldExpandNode={(level) => level < 2}
-        {...p}
-      />
-    )
-  }
-  ,
-})));
-
 export const AnimationFileDataViewerJsonViewer = memo(({ data }: { data: object }) => {
+  const [showJsonViewer , setShowJsonViewer] = useState(true);
+  const [expand, setExpand] = useState(2);
+  const deferredExpand = useDeferredValue(expand);
+
   return (
-    <Suspense fallback={
-      <TextAreaView data={data} />
-    }>
-      <LaziedViewer
-        data={data}
-      />
-    </Suspense>
+    <div className={cssContainer}>
+
+      <div className={cssIndentationControlContainer}>
+        <Button
+          onClick={() => {
+            setShowJsonViewer(s => !s);
+          }}
+        >
+          {showJsonViewer ? 'Show plain viewer' : 'Show JSON viewer'}
+        </Button>
+
+        {
+          showJsonViewer && (
+            <>
+              <span>Show Level: {expand}</span>
+              <IconButton
+                onClick={() => {
+                  setExpand(e => Math.max(e - 1, 2));
+                }}
+                aria-label="decrease"
+              >
+                <LuMinus />
+              </IconButton>
+              <IconButton
+                onClick={() => {
+                  setExpand(e => e + 1);
+                }}
+                aria-label="increase"
+              >
+                <LuPlus />
+              </IconButton>
+            </>
+          )
+        }
+      </div>
+
+      <Suspense
+        fallback={<output className={cssJsonDataContainer}>Loading...</output>}
+      >
+        {
+          !showJsonViewer
+            ? <SimpleTextAreaView data={data} />
+            : (
+              <AnimationFileDataViewerJsonViewerDataViewer
+                className={cssJsonDataContainer}
+                data={data}
+                expand={deferredExpand}
+              />
+            )
+        }
+      </Suspense>
+    </div>
   );
 });
 
+const cssContainer = css`
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+  height: 100%;
+  min-height: 0;
+`;
+
+const cssIndentationControlContainer = css`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+`;
+
 const cssJsonDataContainer = css`
   height: 100%;
+  min-height: 0;
   background: #F1F1F1;
   padding: 0.5rem;
   font-size: 1rem;
@@ -68,11 +100,7 @@ const cssJsonDataContainer = css`
   width: 48rem;
   font-family: monospace;
   border: 1px solid var(--borderColor);
-  min-height: 720px;
-
-  output& {
-    opacity: 0.8;
-  }
+  overflow: auto;
 
   [role="treeitem"] {
     padding: 0 1.5rem;

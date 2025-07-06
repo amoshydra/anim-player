@@ -113,6 +113,7 @@ export const AnimationFileDataViewer: React.FC<AnimationFileDataViewerProps> = m
 
 const cssDialog = css`
   padding: 0;
+  height: 100%;
 
   &::backdrop {
     position: fixed;
@@ -173,10 +174,11 @@ const cssInfoViewContainer = css`
 `;
 
 const cssDataContainer = css`
-  display: grid;
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  min-height: 0;
   flex-shrink: 1;
-  overflow: auto;
   row-gap: 1rem;
   align-content: start;
 `;

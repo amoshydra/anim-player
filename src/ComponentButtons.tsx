@@ -35,6 +35,10 @@ export const cssButton = css`
   ${cssButtonString};
 `;
 
+export const Button = styled.button`
+  ${cssButtonString};
+`;
+
 const _IconButton = styled.button`
   ${cssButtonString};
   width: var(--button-size);
@@ -47,7 +51,6 @@ const _IconButton = styled.button`
     width: 1.5rem;
   }
 `;
-
 
 export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   "aria-label": string;
